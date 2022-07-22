@@ -10,3 +10,4 @@ data = [pd.read_csv(file) for file in files]
 
 for item in data:
     print(item.head(20))
+
