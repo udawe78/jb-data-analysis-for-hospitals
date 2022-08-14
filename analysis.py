@@ -4,9 +4,9 @@ from os import listdir
 
 def what_share(dataset, terms):
     hospital, diagnosis = terms
-    column_hospital, column_diagnosis = dataset.columns
-    filter_hospital = (dataset[column_hospital] == hospital)
-    filter_diagnosis = (dataset[column_diagnosis] == diagnosis)
+    col_hospital, col_diagnosis = dataset.columns
+    filter_hospital = (dataset[col_hospital] == hospital)
+    filter_diagnosis = (dataset[col_diagnosis] == diagnosis)
     share = dataset.loc[filter_hospital & filter_diagnosis].shape[0] / dataset.shape[0]
     return share
 
@@ -75,10 +75,9 @@ age_by_hosp = df.groupby('hospital').aggregate({'age': 'median'})
 answers.append(age_by_hosp.loc['general', 'age'] - age_by_hosp.loc['sports', 'age'])
 
 # 5th QUESTION
-# In which hospital the blood test was taken
-# the most often (there is the biggest number of t
-# in the blood_test column among all the hospitals)?
-#               How many blood tests were taken?
+# In which hospital the blood test was taken the most often
+# (there is the biggest number of t in the blood_test column among all the hospitals)?
+# How many blood tests were taken?
 filter_blood_test = (df['blood_test'] == 't')
 btest_by_hosp = df[filter_blood_test].groupby('hospital').aggregate({'blood_test': 'count'})
 answers.append(f"{btest_by_hosp['blood_test'].idxmax()}, {btest_by_hosp['blood_test'].max()} blood test")
