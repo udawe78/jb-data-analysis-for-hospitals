@@ -2,14 +2,16 @@ import pandas as pd
 from os import listdir
 
 
-def what_share(dataset, hospital, diagnosis):
-    filter_hospital = (dataset['hospital'] == hospital)
-    filter_diagnosis = (dataset['diagnosis'] == diagnosis)
-    share = dataset[filter_hospital & filter_diagnosis].shape[0] / dataset[filter_hospital].shape[0]
+def what_share(dataset, terms):
+    term_1 = (dataset[dataset.columns[0]] == terms[0])
+    term_2 = (dataset[dataset.columns[1]] == terms[1])
+    share = dataset.loc[term_1 & term_2].shape[0] / dataset.shape[0]
     return share
 
 
-# 1 set option
+# Below are the answers to 9 tasks
+
+# 1. Set option
 pd.set_option('display.max_columns', 9)
 
 # 2. Read CSV files with datasets from the specified folder
@@ -35,7 +37,8 @@ df.dropna(axis=0, thresh=1, inplace=True)
 df.replace({'gender': {'female': 'f', 'woman': 'f', 'male': 'm', 'man': 'm'}}, inplace=True)
 
 # 8. Replace the NaN values in the gender column of the prenatal hospital with f
-df.loc[df['hospital'] == 'prenatal', 'gender'] = df.loc[df['hospital'] == 'prenatal', 'gender'].fillna('f')
+filter_prenatal = df['hospital'] == 'prenatal'
+df.loc[filter_prenatal, 'gender'] = df.loc[filter_prenatal, 'gender'].fillna('f')
 
 # 9. Replace the NaN values in the bmi, diagnosis, blood_test, ecg,
 # ultrasound, mri, xray, children, months columns with zeros
@@ -46,8 +49,8 @@ magic_number = 0
 df[cols] = df[cols].fillna(magic_number)
 
 # Below are the answers to 5 questions
-# list of the answers
-num_answer = ('1st', '2nd', '3rd', '4th', '5th')
+
+numbers = ('1st', '2nd', '3rd', '4th', '5th')
 answers = list()
 
 # 1st question: which hospital has the highest number of patients?
@@ -57,10 +60,10 @@ answers.append(df['hospital'].value_counts().idxmax())
 #                        suffers from stomach/dislocation-related issues?
 #                        Round the result to the third decimal place
 conditions = (('general', 'stomach'), ('sports', 'dislocation'))
-for item in conditions:
-    answers.append(round(what_share(df, item[0], item[1]), 3))
+for condition in conditions:
+    answers.append(round(what_share(df[['hospital', 'diagnosis']], condition), 3))
 
-# 4th question: hat is the difference in the median ages of the patients
+# 4th question: what is the difference in the median ages of the patients
 #               in the general and sports hospitals?
 temp_df = df.groupby('hospital').aggregate({'age': 'median'})
 answers.append(temp_df.loc['general', 'age'] - temp_df.loc['sports', 'age'])
@@ -74,5 +77,5 @@ temp_df = df[filter_blood_test].groupby('hospital').aggregate({'blood_test': 'co
 answers.append(f"{temp_df['blood_test'].idxmax()}, {temp_df['blood_test'].max()} blood test")
 
 # printing answers
-for k, item in zip(num_answer, answers):
-    print(f'The answer to the {k} question is {item}')
+for number, answer in zip(numbers, answers):
+    print(f'The answer to the {number} question is {answer}')
