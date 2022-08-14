@@ -3,9 +3,11 @@ from os import listdir
 
 
 def what_share(dataset, terms):
-    term_1 = (dataset[dataset.columns[0]] == terms[0])
-    term_2 = (dataset[dataset.columns[1]] == terms[1])
-    share = dataset.loc[term_1 & term_2].shape[0] / dataset.shape[0]
+    term_1, term_2 = terms
+    col_1, col_2 = dataset.columns
+    filter_1 = (dataset[col_1] == term_1)
+    filter_2 = (dataset[col_2] == term_2)
+    share = dataset.loc[filter_1 & filter_2].shape[0] / dataset.shape[0]
     return share
 
 
@@ -59,22 +61,23 @@ answers.append(df['hospital'].value_counts().idxmax())
 # 2nd and 3rd questions: what share of the patients in the general/sports hospital
 #                        suffers from stomach/dislocation-related issues?
 #                        Round the result to the third decimal place
+in_columns = ['hospital', 'diagnosis']
 conditions = (('general', 'stomach'), ('sports', 'dislocation'))
 for condition in conditions:
-    answers.append(round(what_share(df[['hospital', 'diagnosis']], condition), 3))
+    answers.append(round(what_share(df[in_columns], condition), 3))
 
 # 4th question: what is the difference in the median ages of the patients
 #               in the general and sports hospitals?
-temp_df = df.groupby('hospital').aggregate({'age': 'median'})
-answers.append(temp_df.loc['general', 'age'] - temp_df.loc['sports', 'age'])
+age_by_hosp = df.groupby('hospital').aggregate({'age': 'median'})
+answers.append(age_by_hosp.loc['general', 'age'] - age_by_hosp.loc['sports', 'age'])
 
 # 5th question: In which hospital the blood test was taken
 #               the most often (there is the biggest number of t
 #               in the blood_test column among all the hospitals)?
 #               How many blood tests were taken?
 filter_blood_test = (df['blood_test'] == 't')
-temp_df = df[filter_blood_test].groupby('hospital').aggregate({'blood_test': 'count'})
-answers.append(f"{temp_df['blood_test'].idxmax()}, {temp_df['blood_test'].max()} blood test")
+btest_by_hosp = df[filter_blood_test].groupby('hospital').aggregate({'blood_test': 'count'})
+answers.append(f"{btest_by_hosp['blood_test'].idxmax()}, {btest_by_hosp['blood_test'].max()} blood test")
 
 # printing answers
 for number, answer in zip(numbers, answers):
