@@ -4,10 +4,8 @@ from os import listdir
 
 def what_share(dataset, terms):
     hospital, diagnosis = terms
-    col_hospital, col_diagnosis = dataset.columns
-    filter_hospital = (dataset[col_hospital] == hospital)
-    filter_diagnosis = (dataset[col_diagnosis] == diagnosis)
-    share = dataset.loc[filter_hospital & filter_diagnosis].shape[0] / dataset.shape[0]
+    subset = (dataset['hospital'] == hospital) & (dataset['diagnosis'] == diagnosis)
+    share = dataset[subset].shape[0] / dataset.shape[0]
     return share
 
 
