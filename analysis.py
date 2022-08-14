@@ -3,11 +3,11 @@ from os import listdir
 
 
 def what_share(dataset, terms):
-    term_1, term_2 = terms
-    col_1, col_2 = dataset.columns
-    filter_1 = (dataset[col_1] == term_1)
-    filter_2 = (dataset[col_2] == term_2)
-    share = dataset.loc[filter_1 & filter_2].shape[0] / dataset.shape[0]
+    hospital, diagnosis = terms
+    column_hospital, column_diagnosis = dataset.columns
+    filter_hospital = (dataset[column_hospital] == hospital)
+    filter_diagnosis = (dataset[column_diagnosis] == diagnosis)
+    share = dataset.loc[filter_hospital & filter_diagnosis].shape[0] / dataset.shape[0]
     return share
 
 
@@ -50,30 +50,34 @@ cols = ['bmi', 'diagnosis', 'blood_test',
 magic_number = 0
 df[cols] = df[cols].fillna(magic_number)
 
-# Below are the answers to 5 questions
+# Below are the answers to 5 QUESTIONS
 
 numbers = ('1st', '2nd', '3rd', '4th', '5th')
 answers = list()
 
-# 1st question: which hospital has the highest number of patients?
+# 1st QUESTION
+# Which hospital has the highest number of patients?
 answers.append(df['hospital'].value_counts().idxmax())
 
-# 2nd and 3rd questions: what share of the patients in the general/sports hospital
-#                        suffers from stomach/dislocation-related issues?
-#                        Round the result to the third decimal place
+# 2nd and 3rd QUESTIONS
+# What share of the patients in the general/sports hospital
+# suffers from stomach/dislocation-related issues?
+# Round the result to the third decimal place
 in_columns = ['hospital', 'diagnosis']
 conditions = (('general', 'stomach'), ('sports', 'dislocation'))
 for condition in conditions:
     answers.append(round(what_share(df[in_columns], condition), 3))
 
-# 4th question: what is the difference in the median ages of the patients
-#               in the general and sports hospitals?
+# 4th QUESTION
+# What is the difference in the median ages of the patients
+# in the general and sports hospitals?
 age_by_hosp = df.groupby('hospital').aggregate({'age': 'median'})
 answers.append(age_by_hosp.loc['general', 'age'] - age_by_hosp.loc['sports', 'age'])
 
-# 5th question: In which hospital the blood test was taken
-#               the most often (there is the biggest number of t
-#               in the blood_test column among all the hospitals)?
+# 5th QUESTION
+# In which hospital the blood test was taken
+# the most often (there is the biggest number of t
+# in the blood_test column among all the hospitals)?
 #               How many blood tests were taken?
 filter_blood_test = (df['blood_test'] == 't')
 btest_by_hosp = df[filter_blood_test].groupby('hospital').aggregate({'blood_test': 'count'})
