@@ -63,10 +63,9 @@ answers.append(df['hospital'].value_counts().idxmax())
 # What share of the patients in the general/sports hospital
 # suffers from stomach/dislocation-related issues?
 # Round the result to the third decimal place
-in_columns = ['hospital', 'diagnosis']
 conditions = (('general', 'stomach'), ('sports', 'dislocation'))
 for condition in conditions:
-    answers.append(round(what_share(df[in_columns], condition), 3))
+    answers.append(round(what_share(df, condition), 3))
 
 # 4th QUESTION
 # What is the difference in the median ages of the patients
