@@ -2,10 +2,12 @@ import pandas as pd
 from os import listdir
 
 
-def what_share(dataset, terms):
+# calculate the share of the patients in the particular hospital
+# suffers from certain issues
+def what_share(dataset, terms: tuple) -> float:
     hospital, diagnosis = terms
-    subset = (dataset['hospital'] == hospital) & (dataset['diagnosis'] == diagnosis)
-    share = dataset[subset].shape[0] / dataset.shape[0]
+    filt = (dataset['hospital'] == hospital) & (dataset['diagnosis'] == diagnosis)
+    share = dataset[filt].shape[0] / dataset.shape[0]
     return share
 
 
@@ -26,7 +28,7 @@ for table in tables[1:]:
 
 # 4. Merge the data frames into one
 df = pd.concat(tables, ignore_index=True)
-
+print(type(df))
 # 5. Delete the Unnamed: 0 column
 df.drop(columns=df.columns[0], inplace=True)
 
