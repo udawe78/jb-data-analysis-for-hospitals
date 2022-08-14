@@ -74,13 +74,12 @@ age_by_hosp = df.groupby('hospital').aggregate({'age': 'median'})
 answers.append(age_by_hosp.loc['general', 'age'] - age_by_hosp.loc['sports', 'age'])
 
 # 5th QUESTION
-# In which hospital the blood test was taken the most often
-# (there is the biggest number of t in the blood_test column among all the hospitals)?
+# What is the biggest number of t in the blood_test column among all the hospitals?
 # How many blood tests were taken?
 filter_blood_test = (df['blood_test'] == 't')
 btest_by_hosp = df[filter_blood_test].groupby('hospital').aggregate({'blood_test': 'count'})
 answers.append(f"{btest_by_hosp['blood_test'].idxmax()}, {btest_by_hosp['blood_test'].max()} blood test")
 
-# printing answers
+# all 5 answers
 for number, answer in zip(numbers, answers):
     print(f'The answer to the {number} question is {answer}')
